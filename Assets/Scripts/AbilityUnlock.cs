@@ -14,7 +14,8 @@ public class AbilityUnlock : MonoBehaviour
     {
         if(otherObject.tag == "Player")
         {
-            PlayerAbilityTracker player = otherObject.GetComponent<PlayerAbilityTracker>();
+            PlayerAbilityTracker player = otherObject.GetComponentInParent<PlayerAbilityTracker>();
+            if (player == null) Debug.Log("No Player");
             if(unlockDoubleJump)
             {
                 player.canDoubleJump = true;

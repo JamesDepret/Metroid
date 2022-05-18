@@ -125,14 +125,15 @@ public class PlayerController : MonoBehaviour
     {
         isOnGround = Physics2D.OverlapCircle(groundPoint.position, (float).2, whatIsGround);
 
+        if (isOnGround)
+        {
+            canDoubleJump = true;
+        }
+
         if ((isOnGround || ( canDoubleJump && abilities.canDoubleJump) ) && Input.GetButtonDown("Jump"))
         {
             
-            if (isOnGround)
-            {
-                canDoubleJump = true;
-            } 
-            else 
+            if (!isOnGround) 
             {
                 canDoubleJump = false;
                 animator.SetTrigger("doubleJump");
