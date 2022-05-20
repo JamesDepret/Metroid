@@ -19,6 +19,7 @@ public class PlayerHealthController : MonoBehaviour
     public int redFlashSteps = 10;
     private int redFlashCurrentStep;
     private List<float> redValues = new List<float>();
+    public GameObject deathEffect;
 
     void Start()
     {
@@ -39,7 +40,14 @@ public class PlayerHealthController : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        } else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void DamagePlayer(int damageAmount)
@@ -51,7 +59,8 @@ public class PlayerHealthController : MonoBehaviour
             if(currentHealth <= 0)
             {
                 currentHealth = 0;
-                gameObject.SetActive(false);
+                //gameObject.SetActive(false);
+                RespawnController.instance.Respawn();
             } else
             {
                 invincibilityCounter = invincibilityLength;
@@ -127,5 +136,27 @@ public class PlayerHealthController : MonoBehaviour
             sprite.color.g,
             sprite.color.b,
             sprite.color.a);
+    }
+
+    public void RespawnHealth()
+    {
+        currentHealth = maxHealth;
+        UIController.instance.UpdateHealth(currentHealth, maxHealth);
+    }
+
+    public void DeathEffect()
+    {
+
+        if (deathEffect != null)
+        {
+            Instantiate(deathEffect, transform.position, transform.rotation);
+        }
+    }
+
+    public void HealPlayer(int health)
+    {
+        currentHealth += health;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        UIController.instance.UpdateHealth(currentHealth, maxHealth);
     }
 }
