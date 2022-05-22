@@ -42,16 +42,24 @@ public class PlayerController : MonoBehaviour
 
     private PlayerAbilityTracker abilities;
 
+    
+    public bool canMove;
+
     void Start()
     {
         abilities = GetComponent<PlayerAbilityTracker>(); // Find on runtime if the current Object has an PlayerAbilityTracker component
+        canMove = true;
     }
 
     void Update()
     {
-        HorizontalMovement();
-        JumpMovement();
-        BallMode();
+        if(canMove) {
+            HorizontalMovement();
+            JumpMovement();
+            BallMode();
+        } else {
+            playerRigidBody.velocity = Vector2.zero;
+        }
         SetupAnimator();
         ShotLogic();
     }

@@ -18,7 +18,7 @@ public class PlayerHealthController : MonoBehaviour
     public SpriteRenderer[] playerSprites;
     public int redFlashSteps = 10;
     private int redFlashCurrentStep;
-    private List<float> redValues = new List<float>();
+    private List<float> originalRedValues = new List<float>();
     public GameObject deathEffect;
 
     void Start()
@@ -28,7 +28,7 @@ public class PlayerHealthController : MonoBehaviour
 
         foreach (SpriteRenderer sprite in playerSprites)
         {
-            redValues.Add(sprite.color.r);
+            originalRedValues.Add(sprite.color.r);
         }
     }
 
@@ -71,6 +71,42 @@ public class PlayerHealthController : MonoBehaviour
 
         }
     }
+/*
+    private bool fadingToRed, fadingFromRed;
+    private void FlashRed(){
+        if(fadingToRed) {
+            foreach (SpriteRenderer sprite in playerSprites)
+            {
+                SetSpriteRedColor(
+                    sprite,
+                    Mathf.MoveTowards(sprite.color.r,1f,flashLength * Time.deltaTime)
+                );
+            }
+            if(playerSprites[0].color.r == 1f) {
+                fadingToRed = false;
+                if(invincibilityCounter < 0){
+                    fadingFromRed = true;
+                }
+            }
+        } else if (fadingFromRed) {
+            int index = 0;
+            foreach (SpriteRenderer sprite in playerSprites)
+            {
+                SetSpriteRedColor(
+                    sprite,
+                    Mathf.MoveTowards(sprite.color.r,originalRedValues[index],flashLength * Time.deltaTime)
+                );
+                index++;
+            }
+            if(playerSprites[0].color.r == 0f) {
+                fadingFromRed = false;
+                if(invincibilityCounter < 0){
+                    fadingToRed = true;
+                }
+            }
+        }
+    }
+    */
     private void FlashRed()
     {
         int index;
@@ -85,7 +121,7 @@ public class PlayerHealthController : MonoBehaviour
 
                     SetSpriteRedColor(
                         sprite,
-                        sprite.color.r + (1 - redValues[index]) / redFlashSteps
+                        sprite.color.r + (1 - originalRedValues[index]) / redFlashSteps
                     );
                     redFlashCurrentStep--;
                     index++;
@@ -103,7 +139,7 @@ public class PlayerHealthController : MonoBehaviour
 
                     SetSpriteRedColor(
                         sprite,
-                        sprite.color.r - (1 - redValues[index]) / redFlashSteps
+                        sprite.color.r - (1 - originalRedValues[index]) / redFlashSteps
                     );
                     redFlashCurrentStep--;
                     index++;
@@ -120,7 +156,7 @@ public class PlayerHealthController : MonoBehaviour
                     index = 0;
                     foreach (SpriteRenderer sprite in playerSprites)
                     {
-                        SetSpriteRedColor(sprite, redValues[index]);
+                        SetSpriteRedColor(sprite, originalRedValues[index]);
                         index++;
                     }
                 }
