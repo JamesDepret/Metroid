@@ -8850,7 +8850,7 @@ MonoBehaviour:
   - {fileID: 916316185}
   - {fileID: 1738905950}
   - {fileID: 1616045054}
-  moveSpeed: 5
+  moveSpeed: 7
 --- !u!114 &1928382279
 MonoBehaviour:
   m_ObjectHideFlags: 0
