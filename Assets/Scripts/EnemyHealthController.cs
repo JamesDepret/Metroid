@@ -6,7 +6,7 @@ public class EnemyHealthController : MonoBehaviour
 {
     public int totalHealth = 3;
     public GameObject deathEffect;
-    public void damageEnemy(int damageAmount)
+    public void DamageEnemy(int damageAmount)
     {
         totalHealth -= damageAmount;
         if(totalHealth <= 0) {

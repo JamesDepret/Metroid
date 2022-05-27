@@ -9,6 +9,7 @@ public class BossActivator : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.tag == "Player"){ 
             bossToActivate.SetActive(true);
+            bossToActivate.GetComponent<MageBattle>().StartBattle();
             gameObject.SetActive(false);
         }
     }

@@ -21,7 +21,12 @@ public class BulletController : MonoBehaviour
     {
         if(collision.tag == "Enemy")
         {
-            collision.GetComponent<EnemyHealthController>().damageEnemy(damageAmount);
+            collision.GetComponent<EnemyHealthController>().DamageEnemy(damageAmount);
+        }
+
+        if(collision.tag == "Boss")
+        {
+            BossHealthController.instance.TakeDamage(damageAmount);
         }
 
         if(impactEffect != null)
