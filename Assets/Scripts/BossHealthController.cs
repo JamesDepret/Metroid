@@ -5,7 +5,9 @@ using UnityEngine;
 public class BossHealthController : MonoBehaviour
 {
     public static BossHealthController instance;
-    public int CurrentHealth = 100;
+    public int CurrentHealth = 250;
+    public int PhaseTwoHealthTreshHold = 200;
+    public int PhaseThreeHealthTreshHold = 150;
     public MageBattle theMage;
     // Start is called before the first frame update
     private void Awake() {

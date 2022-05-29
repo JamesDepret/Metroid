@@ -136,8 +136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19aa1ae120c2d204baafc1c4e6694884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockDoubleJump: 1
-  unlockDash: 0
+  unlockDoubleJump: 0
+  unlockDash: 1
   unlockBecomeBall: 0
   unlockDropBomb: 0
   pickupEffect: {fileID: 7179094072461893521, guid: 17409e838eeb6954599a7ab231f7824e, type: 3}

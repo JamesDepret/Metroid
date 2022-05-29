@@ -182,7 +182,8 @@ public class PlayerHealthController : MonoBehaviour
 
     public void DeathEffect()
     {
-
+        // reset on this boss
+        GetComponent<PlayerAbilityTracker>().ResetSkill();
         if (deathEffect != null)
         {
             Instantiate(deathEffect, transform.position, transform.rotation);

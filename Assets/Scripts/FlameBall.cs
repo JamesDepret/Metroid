@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class FlameBall : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject impactEffect;
+    public int damageAmount = 1;
+    private bool playerHit;
 
-    // Update is called once per frame
-    void Update()
+
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        
+        if (other.gameObject.tag == "Player")
+        {
+            PlayerHealthController.instance.DamagePlayer(damageAmount);
+            playerHit = true;
+        }
+        if (impactEffect != null && !playerHit)
+            Instantiate(impactEffect, transform.position, Quaternion.identity);
+
+
+        Destroy(gameObject);
     }
 }

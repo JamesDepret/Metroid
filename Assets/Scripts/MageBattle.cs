@@ -21,6 +21,25 @@ public class MageBattle : MonoBehaviour
     private Animator currentAnimator;
     private PlayerHealthController thePlayer;
     private bool PhaseTwoTransition;
+    private bool PhaseThreeTransition;
+    public MageBulletCircle bulletCircle;
+    public float bulletCircleDelay;
+    private bool mageCircleActive;
+
+    public float timeBetweenShots;
+    private float shotCounter;
+    public GameObject bullet;
+    private Transform bulletPoint;
+    public Transform bulletPointPhase1;
+    public Transform bulletPointPhase2;
+    public Transform bulletPointPhase3;
+    private int bulletCounter;
+    public float bulletPulseDelay = 0.3f;
+
+    private bool dashDropped;
+    public GameObject dashAbility;
+    private bool jumpDropped;
+    public GameObject jumpAbility;
 
     void Start()
     {
@@ -28,6 +47,8 @@ public class MageBattle : MonoBehaviour
         Camera.enabled = false;
         activeCounter = activeTime;
         thePlayer = PlayerHealthController.instance;
+        shotCounter = 2;
+        bulletPoint = bulletPointPhase1;
     }
 
     void Update()
@@ -36,29 +57,60 @@ public class MageBattle : MonoBehaviour
         if(battleStarted){
             battleCounter += Time.deltaTime;
             SetBossDirection();
-            if(battleCounter < phaseOneMoment){
-                phaseOne();
+            bulletCircle.UpdateLocation(activeSprite.gameObject.transform);
+            if (battleCounter < phaseOneMoment){
+                PhaseOne();
             } else if(battleCounter < phaseTwoMoment){
-                TransitionPhase(2);
+                if (!PhaseTwoTransition)
+                {
+                    TransitionPhase(2);
+                    bulletPoint = bulletPointPhase2;
+                }
                 if(targetPoint == null){
                     targetPoint = activeSprite.gameObject.transform;
                 }
-                phaseOne();
+                PhaseOne();
+                PhaseTwo();
+            } else if(battleCounter < phaseThreeMoment){
+                if (!PhaseThreeTransition)
+                {
+                    TransitionPhase(3);
+                    bulletPoint = bulletPointPhase3;
+                }
+                if(targetPoint == null){
+                    targetPoint = activeSprite.gameObject.transform;
+                }
+                PhaseOne();
+                PhaseTwo();
+                PhaseThree();
             }
         }
     }
 
-    private void phaseOne(){
-        if(activeCounter > 0 && targetPoint == null){
-            activeCounter -= Time.deltaTime;
-            fadeCounter = fadeOutTime;
-        }
-        else if (activeCounter > 0){
-            if(Vector3.Distance(activeSprite.gameObject.transform.position, targetPoint.transform.position) > 0.02f){
-                activeSprite.gameObject.transform.position = Vector3.MoveTowards(activeSprite.gameObject.transform.position, targetPoint.transform.position, moveSpeed * Time.deltaTime);
-            } else {
-                activeCounter = 0;
+    private void PhaseOne(){
+        if(activeCounter > 0){
+            if(targetPoint == null) { 
+                activeCounter -= Time.deltaTime;
                 fadeCounter = fadeOutTime;
+            } else
+            {
+                if (Vector3.Distance(activeSprite.gameObject.transform.position, targetPoint.transform.position) > 0.02f)
+                {
+                    activeSprite.gameObject.transform.position = Vector3.MoveTowards(activeSprite.gameObject.transform.position, targetPoint.transform.position, moveSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    activeCounter = 0;
+                    fadeCounter = fadeOutTime;
+                }
+            }
+            shotCounter -= Time.deltaTime;
+            if(shotCounter <= 0)
+            {
+                shotCounter = timeBetweenShots;
+                bulletCounter = 0;
+
+                StartCoroutine(BulletsCoRoutine());
             }
         }
         else if (fadeCounter > 0)
@@ -90,15 +142,67 @@ public class MageBattle : MonoBehaviour
         }
     }
 
+    public void PhaseTwo()
+    {
+        if (activeCounter > 0 && !mageCircleActive) {
+            bulletCircle.FireCircle();
+            mageCircleActive = true; 
+            StartCoroutine(ShotsCoRoutine());
+        }
+
+        if (!dashDropped )
+        {
+            if(BossHealthController.instance.CurrentHealth < BossHealthController.instance.PhaseTwoHealthTreshHold)
+            {
+                dashAbility.SetActive(true);
+                dashDropped = true;
+            }
+        }
+    }
+
+    public void PhaseThree()
+    {
+
+        if (!jumpDropped)
+        {
+            if(BossHealthController.instance.CurrentHealth < BossHealthController.instance.PhaseThreeHealthTreshHold)
+            {
+                jumpAbility.SetActive(true);
+                jumpDropped = true;
+            }
+        }
+    }
+
+    IEnumerator ShotsCoRoutine()
+    {
+        yield return new WaitForSeconds(bulletCircleDelay);
+        mageCircleActive = false;
+    }
+
+    IEnumerator BulletsCoRoutine()
+    {
+        yield return new WaitForSeconds(bulletPulseDelay);
+        Instantiate(bullet, bulletPoint.position, Quaternion.identity);
+        bulletCounter++;
+        if (bulletCounter < 3)
+        {
+            StartCoroutine(BulletsCoRoutine());
+        }
+    }
+
+
+
     private void TransitionPhase(int phaseNumber){
-        if(!PhaseTwoTransition && sprites.Length >= phaseNumber && inactiveCounter > 0 ){
+        if(sprites.Length >= phaseNumber && inactiveCounter > 0 ){
             int index = phaseNumber - 1;
             Transform currentPoint = activeSprite.gameObject.transform;
             activeSprite.gameObject.SetActive(false);
             activeSprite = sprites[index];
             getAnimator();
             activeSprite.transform.position = currentPoint.position;
-            PhaseTwoTransition = true;
+
+            if (phaseNumber == 2) PhaseTwoTransition = true;
+            if (phaseNumber == 3) PhaseThreeTransition = true;
         }
     }
 

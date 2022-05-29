@@ -16,7 +16,6 @@ public class MageBulletCircle : MonoBehaviour
 
     private void Start()
     {
-        FireCircle();
     }
     public void FireCircle()
     {
@@ -24,8 +23,6 @@ public class MageBulletCircle : MonoBehaviour
         shotAngle = 180 / shotsAmount;
         currentAngle = Random.Range(0,360);
         shotAngle = Random.Range(0, 2) == 0 ? shotAngle * -1 : shotAngle;
-        Debug.Log(rotationDirection);
-        Debug.Log(shotsAmount);
         StartCoroutine(ShotsCoRoutine());
     }
 
@@ -41,5 +38,10 @@ public class MageBulletCircle : MonoBehaviour
             shotsFired++;
             StartCoroutine(ShotsCoRoutine());
         }
+    }
+
+    public void UpdateLocation(Transform location)
+    {
+        transform.position = location.position;
     }
 }
