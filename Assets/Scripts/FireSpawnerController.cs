@@ -33,7 +33,7 @@ public class FireSpawnerController : MonoBehaviour
         } else
         {
             anim.SetTrigger("vanish");
-            if(fadeCounter <= 0) gameObject.SetActive(false);
+            if(fadeCounter <= 0) Destroy(gameObject);
             fadeCounter -= Time.deltaTime;
         }
     }

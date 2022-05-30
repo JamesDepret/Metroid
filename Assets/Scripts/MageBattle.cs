@@ -41,6 +41,10 @@ public class MageBattle : MonoBehaviour
     private bool jumpDropped;
     public GameObject jumpAbility;
 
+    public GameObject FlameSpawner;
+    public float FlameSpawnerTimeToSpawn;
+    private float FlameSpawnerCounter;
+
     void Start()
     {
         Camera = FindObjectOfType<CameraController>();
@@ -49,6 +53,8 @@ public class MageBattle : MonoBehaviour
         thePlayer = PlayerHealthController.instance;
         shotCounter = 2;
         bulletPoint = bulletPointPhase1;
+        FlameSpawnerCounter = FlameSpawnerTimeToSpawn;
+        AudioManager.instance.PlayBossMusic();
     }
 
     void Update()
@@ -170,6 +176,15 @@ public class MageBattle : MonoBehaviour
                 jumpAbility.SetActive(true);
                 jumpDropped = true;
             }
+        }
+
+        if(FlameSpawnerCounter <= 0)
+        {
+            FlameSpawnerCounter = FlameSpawnerTimeToSpawn;
+            Instantiate(FlameSpawner);
+        } else
+        {
+            FlameSpawnerCounter -= Time.deltaTime;
         }
     }
 
