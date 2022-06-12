@@ -9746,9 +9746,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75f9bbd4d439cc1479c834460471be74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentHealth: 250
-  PhaseTwoHealthTreshHold: 200
-  PhaseThreeHealthTreshHold: 150
+  CurrentHealth: 125
+  PhaseTwoHealthTreshHold: 80
+  PhaseThreeHealthTreshHold: 40
   theMage: {fileID: 1928382278}
 --- !u!1 &1950268418
 GameObject:

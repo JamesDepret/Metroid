@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class MageBattle : MonoBehaviour
 {
-    private CameraController Camera;
-    public Transform CamPosition;
+    private CameraController camera;
+    public Transform camPosition;
     public SpriteRenderer activeSprite;
     public SpriteRenderer[] sprites;
-    public float CamSpeed;
-    public float TimeBeforeCombatStart = 5f;
+    public float camSpeed;
+    public float timeBeforeCombatStart = 5f;
     public int phaseOneMoment, phaseTwoMoment, phaseThreeMoment, battleEndTime = 273;
     public float activeTime, fadeOutTime, inactiveTime;
     private float activeCounter, fadeCounter, inactiveCounter;
@@ -45,50 +45,71 @@ public class MageBattle : MonoBehaviour
     public float FlameSpawnerTimeToSpawn;
     private float FlameSpawnerCounter;
 
+    private bool battleIsActive;
+
     void Start()
     {
-        Camera = FindObjectOfType<CameraController>();
-        Camera.enabled = false;
+        camera = FindObjectOfType<CameraController>();
+        camera.enabled = false;
         activeCounter = activeTime;
         thePlayer = PlayerHealthController.instance;
         shotCounter = 2;
         bulletPoint = bulletPointPhase1;
         FlameSpawnerCounter = FlameSpawnerTimeToSpawn;
         AudioManager.instance.PlayBossMusic();
+        battleIsActive = true;
     }
 
     void Update()
     {
-        Camera.transform.position = Vector3.MoveTowards(Camera.transform.position, CamPosition.position, CamSpeed * Time.deltaTime);
-        if(battleStarted){
-            battleCounter += Time.deltaTime;
-            SetBossDirection();
-            bulletCircle.UpdateLocation(activeSprite.gameObject.transform);
-            if (battleCounter < phaseOneMoment){
-                PhaseOne();
-            } else if(battleCounter < phaseTwoMoment){
-                if (!PhaseTwoTransition)
+        if (battleIsActive)
+        {
+            camera.SetupBossCamera(camPosition, camSpeed);
+            if (battleStarted)
+            {
+                battleCounter += Time.deltaTime;
+                SetBossDirection();
+                bulletCircle.UpdateLocation(activeSprite.gameObject.transform);
+                if (battleCounter < phaseOneMoment)
                 {
-                    TransitionPhase(2);
-                    bulletPoint = bulletPointPhase2;
+                    PhaseOne();
                 }
-                if(targetPoint == null){
-                    targetPoint = activeSprite.gameObject.transform;
-                }
-                PhaseOne();
-                PhaseTwo();
-            } else if(battleCounter < phaseThreeMoment){
-                if (!PhaseThreeTransition)
+                else if (battleCounter < phaseTwoMoment)
                 {
-                    TransitionPhase(3);
-                    bulletPoint = bulletPointPhase3;
+                    if (!PhaseTwoTransition)
+                    {
+                        TransitionPhase(2);
+                        bulletPoint = bulletPointPhase2;
+                    }
+                    if (targetPoint == null)
+                    {
+                        targetPoint = activeSprite.gameObject.transform;
+                    }
+                    PhaseOne();
+                    PhaseTwo();
                 }
-                if(targetPoint == null){
-                    targetPoint = activeSprite.gameObject.transform;
+                else if (battleCounter < phaseThreeMoment)
+                {
+                    if (!PhaseThreeTransition)
+                    {
+                        TransitionPhase(3);
+                        bulletPoint = bulletPointPhase3;
+                    }
+                    if (targetPoint == null)
+                    {
+                        targetPoint = activeSprite.gameObject.transform;
+                    }
+                    PhaseOne();
+                    PhaseTwo();
+                    PhaseThree();
                 }
-                PhaseOne();
-                PhaseTwo();
-                PhaseThree();
+
+                if(battleCounter > battleEndTime)
+                {
+                    battleIsActive = false;
+                    camera.EndBossBattle();
+                    gameObject.SetActive(false);
+                }
             }
         }
     }
@@ -248,7 +269,7 @@ public class MageBattle : MonoBehaviour
 
     IEnumerator StartBattletCoRoutine()
     {
-        yield return new WaitForSeconds(TimeBeforeCombatStart);
+        yield return new WaitForSeconds(timeBeforeCombatStart);
         activeSprite.gameObject.SetActive(true);
         getAnimator();
         battleStarted = true;
